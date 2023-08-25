@@ -1,8 +1,8 @@
 local Release = "Beta 1"
 local NotificationDuration = 6.5
 local TrilhaFolder = "Trilha"
-local ConfigurationFolder = TrilhaFolder.."/Configurations"
-local ConfigurationExtension = ".rfld"
+local ConfigurationFolder = TrilhaFolder"/Configurations"
+local ConfigurationExtension = ".json"
 
 
 
