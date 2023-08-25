@@ -1,16 +1,28 @@
+--[[
+
+Tempest Interface Suite
+by Sirius
+
+shlex | Designing + Programming
+iRay  | Programming
+
+]]
+
+
+
 local Release = "Beta 1"
 local NotificationDuration = 6.5
-local TrilhaFolder = "Trilha"
-local ConfigurationFolder = TrilhaFolder.."/Configurations"
+local TempestFolder = "Tempest Hub"
+local ConfigurationFolder = TempestFolder.."/Configurations"
 local ConfigurationExtension = ".json"
 
 
 
-local TrilhaLibrary = {
+local TempestLibrary = {
 	Flags = {},
 	Theme = {
 		Default = {
-			TextFont = "Default", -- Default will use the various font faces used across Trilha
+			TextFont = "Default", -- Default will use the various font faces used across Tempest
 			TextColor = Color3.fromRGB(240, 240, 240),
 
 			Background = Color3.fromRGB(25, 25, 25),
@@ -49,7 +61,7 @@ local TrilhaLibrary = {
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 		Light = {
-			TextFont = "Gotham", -- Default will use the various font faces used across Trilha
+			TextFont = "Gotham", -- Default will use the various font faces used across Tempest
 			TextColor = Color3.fromRGB(50, 50, 50), -- i need to make all text 240, 240, 240 and base gray on transparency not color to do this
 
 			Background = Color3.fromRGB(255, 255, 255),
@@ -102,34 +114,34 @@ local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 
 -- Interface Management
-local Trilha = game:GetObjects("rbxassetid://10804731440")[1]
+local Tempest = game:GetObjects("rbxassetid://10804731440")[1]
 
-Trilha.Enabled = false
+Tempest.Enabled = false
 
 
 if gethui then
-	Trilha.Parent = gethui()
+	Tempest.Parent = gethui()
 elseif syn.protect_gui then 
-	syn.protect_gui(Trilha)
-	Trilha.Parent = CoreGui
+	syn.protect_gui(Tempest)
+	Tempest.Parent = CoreGui
 elseif CoreGui:FindFirstChild("RobloxGui") then
-	Trilha.Parent = CoreGui:FindFirstChild("RobloxGui")
+	Tempest.Parent = CoreGui:FindFirstChild("RobloxGui")
 else
-	Trilha.Parent = CoreGui
+	Tempest.Parent = CoreGui
 end
 
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == Trilha.Name and Interface ~= Trilha then
+		if Interface.Name == Tempest.Name and Interface ~= Tempest then
 			Interface.Enabled = false
-			Interface.Name = "Trilha-Old"
+			Interface.Name = "Tempest-Old"
 		end
 	end
 else
 	for _, Interface in ipairs(CoreGui:GetChildren()) do
-		if Interface.Name == Trilha.Name and Interface ~= Trilha then
+		if Interface.Name == Tempest.Name and Interface ~= Tempest then
 			Interface.Enabled = false
-			Interface.Name = "Trilha-Old"
+			Interface.Name = "Tempest-Old"
 		end
 	end
 end
@@ -137,13 +149,13 @@ end
 -- Object Variables
 
 local Camera = workspace.CurrentCamera
-local Main = Trilha.Main
+local Main = Tempest.Main
 local Topbar = Main.Topbar
 local Elements = Main.Elements
 local LoadingFrame = Main.LoadingFrame
 local TabList = Main.TabList
 
-Trilha.DisplayOrder = 100
+Tempest.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
 
 
@@ -155,13 +167,13 @@ local CEnabled = false
 local Minimised = false
 local Hidden = false
 local Debounce = false
-local Notifications = Trilha.Notifications
+local Notifications = Tempest.Notifications
 
-local SelectedTheme = TrilhaLibrary.Theme.Default
+local SelectedTheme = TempestLibrary.Theme.Default
 
 function ChangeTheme(ThemeName)
-	SelectedTheme = TrilhaLibrary.Theme[ThemeName]
-	for _, obj in ipairs(Trilha:GetDescendants()) do
+	SelectedTheme = TempestLibrary.Theme[ThemeName]
+	for _, obj in ipairs(Tempest:GetDescendants()) do
 		if obj.ClassName == "TextLabel" or obj.ClassName == "TextBox" or obj.ClassName == "TextButton" then
 			if SelectedTheme.TextFont ~= "Default" then 
 				obj.TextColor3 = SelectedTheme.TextColor
@@ -170,14 +182,14 @@ function ChangeTheme(ThemeName)
 		end
 	end
 
-	Trilha.Main.BackgroundColor3 = SelectedTheme.Background
-	Trilha.Main.Topbar.BackgroundColor3 = SelectedTheme.Topbar
-	Trilha.Main.Topbar.CornerRepair.BackgroundColor3 = SelectedTheme.Topbar
-	Trilha.Main.Shadow.Image.ImageColor3 = SelectedTheme.Shadow
+	Tempest.Main.BackgroundColor3 = SelectedTheme.Background
+	Tempest.Main.Topbar.BackgroundColor3 = SelectedTheme.Topbar
+	Tempest.Main.Topbar.CornerRepair.BackgroundColor3 = SelectedTheme.Topbar
+	Tempest.Main.Shadow.Image.ImageColor3 = SelectedTheme.Shadow
 
-	Trilha.Main.Topbar.ChangeSize.ImageColor3 = SelectedTheme.TextColor
-	Trilha.Main.Topbar.Hide.ImageColor3 = SelectedTheme.TextColor
-	Trilha.Main.Topbar.Theme.ImageColor3 = SelectedTheme.TextColor
+	Tempest.Main.Topbar.ChangeSize.ImageColor3 = SelectedTheme.TextColor
+	Tempest.Main.Topbar.Hide.ImageColor3 = SelectedTheme.TextColor
+	Tempest.Main.Topbar.Theme.ImageColor3 = SelectedTheme.TextColor
 
 	for _, TabPage in ipairs(Elements:GetChildren()) do
 		for _, Element in ipairs(TabPage:GetChildren()) do
@@ -231,16 +243,16 @@ end
 local function LoadConfiguration(Configuration)
 	local Data = HttpService:JSONDecode(Configuration)
 	for FlagName, FlagValue in next, Data do
-		if TrilhaLibrary.Flags[FlagName] then
+		if TempestLibrary.Flags[FlagName] then
 			spawn(function() 
-				if TrilhaLibrary.Flags[FlagName].Type == "ColorPicker" then
-					TrilhaLibrary.Flags[FlagName]:Set(UnpackColor(FlagValue))
+				if TempestLibrary.Flags[FlagName].Type == "ColorPicker" then
+					TempestLibrary.Flags[FlagName]:Set(UnpackColor(FlagValue))
 				else
-					if TrilhaLibrary.Flags[FlagName].CurrentValue or TrilhaLibrary.Flags[FlagName].CurrentKeybind or TrilhaLibrary.Flags[FlagName].CurrentOption or TrilhaLibrary.Flags[FlagName].Color ~= FlagValue then TrilhaLibrary.Flags[FlagName]:Set(FlagValue) end
+					if TempestLibrary.Flags[FlagName].CurrentValue or TempestLibrary.Flags[FlagName].CurrentKeybind or TempestLibrary.Flags[FlagName].CurrentOption or TempestLibrary.Flags[FlagName].Color ~= FlagValue then TempestLibrary.Flags[FlagName]:Set(FlagValue) end
 				end    
 			end)
 		else
-			TrilhaLibrary:Notify({Title = "Flag Error", Content = "Trilha was unable to find '"..FlagName.. "'' in the current script"})
+			TempestLibrary:Notify({Title = "Flag Error", Content = "Tempest was unable to find '"..FlagName.. "'' in the current script"})
 		end
 	end
 end
@@ -248,7 +260,7 @@ end
 local function SaveConfiguration()
 	if not CEnabled then return end
 	local Data = {}
-	for i,v in pairs(TrilhaLibrary.Flags) do
+	for i,v in pairs(TempestLibrary.Flags) do
 		if v.Type == "ColorPicker" then
 			Data[i] = PackColor(v.Color)
 		else
@@ -479,7 +491,7 @@ local neon = (function() -- Open sourced neon module
 
 end)()
 
-function TrilhaLibrary:Notify(NotificationSettings)
+function TempestLibrary:Notify(NotificationSettings)
 	spawn(function()
 		local ActionCompleted = true
 		local Notification = Notifications.Template:Clone()
@@ -505,7 +517,7 @@ function TrilhaLibrary:Notify(NotificationSettings)
 				ActionCompleted = false
 				local NewAction = Notification.Actions.Template:Clone()
 				NewAction.BackgroundColor3 = SelectedTheme.NotificationActionsBackground
-				if SelectedTheme ~= TrilhaLibrary.Theme.Default then
+				if SelectedTheme ~= TempestLibrary.Theme.Default then
 					NewAction.TextColor3 = SelectedTheme.TextColor
 				end
 				NewAction.Name = Action.Name
@@ -519,7 +531,7 @@ function TrilhaLibrary:Notify(NotificationSettings)
 				NewAction.MouseButton1Click:Connect(function()
 					local Success, Response = pcall(Action.Callback)
 					if not Success then
-						print("Trilha | Action: "..Action.Name.." Callback Error " ..tostring(Response))
+						print("Tempest | Action: "..Action.Name.." Callback Error " ..tostring(Response))
 					end
 					ActionCompleted = true
 				end)
@@ -568,7 +580,7 @@ function TrilhaLibrary:Notify(NotificationSettings)
 			end
 		end
 
-		if Trilha.Name == "Trilha" then
+		if Tempest.Name == "Tempest" then
 			neon:BindFrame(Notification.BlurModule, {
 				Transparency = 0.98;
 				BrickColor = BrickColor.new("Institutional white");
@@ -625,7 +637,7 @@ end
 
 function Hide()
 	Debounce = true
-	TrilhaLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping RightShift", Duration = 7})
+	TempestLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping RightShift", Duration = 7})
 	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 470, 0, 400)}):Play()
 	TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 470, 0, 45)}):Play()
 	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
@@ -860,7 +872,7 @@ function Minimise()
 	Debounce = false
 end
 
-function TrilhaLibrary:CreateWindow(Settings)
+function TempestLibrary:CreateWindow(Settings)
 	local Passthrough = false
 	Topbar.Title.Text = Settings.Name
 	Main.Size = UDim2.new(0, 450, 0, 260)
@@ -870,10 +882,10 @@ function TrilhaLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.TextTransparency = 1
 	Main.Shadow.Image.ImageTransparency = 1
 	LoadingFrame.Version.TextTransparency = 1
-	LoadingFrame.Title.Text = Settings.LoadingTitle or "Trilha Interface Suite"
+	LoadingFrame.Title.Text = Settings.LoadingTitle or "Tempest Interface Suite"
 	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "by Sirius"
-	if Settings.LoadingTitle ~= "Trilha Interface Suite" then
-		LoadingFrame.Version.Text = "Trilha UI"
+	if Settings.LoadingTitle ~= "Tempest Interface Suite" then
+		LoadingFrame.Version.Text = "Tempest UI"
 	end
 	Topbar.Visible = false
 	Elements.Visible = false
@@ -884,7 +896,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 		if not Settings.ConfigurationSaving.FileName then
 			Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
 		end
-		if not isfolder(TrilhaFolder.."/".."Configuration Folders") then
+		if not isfolder(TempestFolder.."/".."Configuration Folders") then
 
 		end
 		if Settings.ConfigurationSaving.Enabled == nil then
@@ -914,10 +926,10 @@ function TrilhaLibrary:CreateWindow(Settings)
 	end
 
 	if Settings.Discord then
-		if not isfolder(TrilhaFolder.."/Discord Invites") then
-			makefolder(TrilhaFolder.."/Discord Invites")
+		if not isfolder(TempestFolder.."/Discord Invites") then
+			makefolder(TempestFolder.."/Discord Invites")
 		end
-		if not isfile(TrilhaFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
+		if not isfile(TempestFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
 			if request then
 				request({
 					Url = 'http://127.0.0.1:6463/rpc?v=1',
@@ -935,7 +947,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			end
 
 			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
-				writefile(TrilhaFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Trilha RememberJoins is true for this invite, this invite will not ask you to join again")
+				writefile(TempestFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Tempest RememberJoins is true for this invite, this invite will not ask you to join again")
 			end
 		else
 
@@ -948,8 +960,8 @@ function TrilhaLibrary:CreateWindow(Settings)
 			return
 		end
 
-		if not isfolder(TrilhaFolder.."/Key System") then
-			makefolder(TrilhaFolder.."/Key System")
+		if not isfolder(TempestFolder.."/Key System") then
+			makefolder(TempestFolder.."/Key System")
 		end
 
 		if typeof(Settings.KeySettings.Key) == "string" then Settings.KeySettings.Key = {Settings.KeySettings.Key} end
@@ -961,7 +973,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					Settings.KeySettings.Key[i] = string.gsub(Settings.KeySettings.Key[i], " ", "")
 				end)
 				if not Success then
-					print("Trilha | "..Key.." Error " ..tostring(Response))
+					print("Tempest | "..Key.." Error " ..tostring(Response))
 				end
 			end
 		end
@@ -970,9 +982,9 @@ function TrilhaLibrary:CreateWindow(Settings)
 			Settings.KeySettings.FileName = "No file name specified"
 		end
 
-		if isfile(TrilhaFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) then
+		if isfile(TempestFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) then
 			for _, MKey in ipairs(Settings.KeySettings.Key) do
-				if string.find(readfile(TrilhaFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension), MKey) then
+				if string.find(readfile(TempestFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension), MKey) then
 					Passthrough = true
 				end
 			end
@@ -980,13 +992,13 @@ function TrilhaLibrary:CreateWindow(Settings)
 
 		if not Passthrough then
 			local AttemptsRemaining = math.random(2,6)
-			Trilha.Enabled = false
+			Tempest.Enabled = false
 			local KeyUI = game:GetObjects("rbxassetid://11380036235")[1]
 
 			if gethui then
 				KeyUI.Parent = gethui()
 			elseif syn.protect_gui then
-				syn.protect_gui(Trilha)
+				syn.protect_gui(Tempest)
 				KeyUI.Parent = CoreGui
 			else
 				KeyUI.Parent = CoreGui
@@ -1071,9 +1083,9 @@ function TrilhaLibrary:CreateWindow(Settings)
 					Passthrough = true
 					if Settings.KeySettings.SaveKey then
 						if writefile then
-							writefile(TrilhaFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)
+							writefile(TempestFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)
 						end
-						TrilhaLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully"})
+						TempestLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully"})
 					end
 				else
 					if AttemptsRemaining == 0 then
@@ -1119,7 +1131,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 				TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
 				TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
 				wait(0.51)
-				TrilhaLibrary:Destroy()
+				TempestLibrary:Destroy()
 				KeyUI:Destroy()
 			end)
 		else
@@ -1132,7 +1144,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 
 	Notifications.Template.Visible = false
 	Notifications.Visible = true
-	Trilha.Enabled = true
+	Tempest.Enabled = true
 	wait(0.5)
 	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {BackgroundTransparency = 0}):Play()
 	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.55}):Play()
@@ -1198,7 +1210,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			Elements.UIPageLayout.Animated = true
 		end
 
-		if SelectedTheme ~= TrilhaLibrary.Theme.Default then
+		if SelectedTheme ~= TempestLibrary.Theme.Default then
 			TabButton.Shadow.Visible = false
 		end
 		TabButton.UIStroke.Color = SelectedTheme.TabStroke
@@ -1286,7 +1298,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Button.Title.Text = "Callback Error"
-					print("Trilha | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Button.Title.Text = ButtonSettings.Name
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -1515,7 +1527,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and ColorPickerSettings.Flag then
-					TrilhaLibrary.Flags[ColorPickerSettings.Flag] = ColorPickerSettings
+					TempestLibrary.Flags[ColorPickerSettings.Flag] = ColorPickerSettings
 				end
 			end
 
@@ -1651,7 +1663,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Input.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Input.Title.Text = "Callback Error"
-					print("Trilha | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..InputSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Input.Title.Text = InputSettings.Name
 					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -1855,7 +1867,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 						TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 						TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 						Dropdown.Title.Text = "Callback Error"
-						print("Trilha | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+						print("Tempest | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
 						wait(0.5)
 						Dropdown.Title.Text = DropdownSettings.Name
 						TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -1928,7 +1940,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Dropdown.Title.Text = "Callback Error"
-					print("Trilha | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Dropdown.Title.Text = DropdownSettings.Name
 					TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -1949,7 +1961,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and DropdownSettings.Flag then
-					TrilhaLibrary.Flags[DropdownSettings.Flag] = DropdownSettings
+					TempestLibrary.Flags[DropdownSettings.Flag] = DropdownSettings
 				end
 			end
 
@@ -2026,7 +2038,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 							TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 							Keybind.Title.Text = "Callback Error"
-							print("Trilha | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
+							print("Tempest | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
 							wait(0.5)
 							Keybind.Title.Text = KeybindSettings.Name
 							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2060,7 +2072,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			end
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and KeybindSettings.Flag then
-					TrilhaLibrary.Flags[KeybindSettings.Flag] = KeybindSettings
+					TempestLibrary.Flags[KeybindSettings.Flag] = KeybindSettings
 				end
 			end
 			return KeybindSettings
@@ -2081,7 +2093,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			Toggle.Title.TextTransparency = 1
 			Toggle.Switch.BackgroundColor3 = SelectedTheme.ToggleBackground
 
-			if SelectedTheme ~= TrilhaLibrary.Theme.Default then
+			if SelectedTheme ~= TempestLibrary.Theme.Default then
 				Toggle.Switch.Shadow.Visible = false
 			end
 
@@ -2147,7 +2159,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
-					print("Trilha | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2195,7 +2207,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
-					print("Trilha | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2206,7 +2218,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and ToggleSettings.Flag then
-					TrilhaLibrary.Flags[ToggleSettings.Flag] = ToggleSettings
+					TempestLibrary.Flags[ToggleSettings.Flag] = ToggleSettings
 				end
 			end
 
@@ -2226,7 +2238,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			Slider.UIStroke.Transparency = 1
 			Slider.Title.TextTransparency = 1
 
-			if SelectedTheme ~= TrilhaLibrary.Theme.Default then
+			if SelectedTheme ~= TempestLibrary.Theme.Default then
 				Slider.Main.Shadow.Visible = false
 			end
 
@@ -2310,7 +2322,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 								TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 								Slider.Title.Text = "Callback Error"
-								print("Trilha | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+								print("Tempest | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
 								wait(0.5)
 								Slider.Title.Text = SliderSettings.Name
 								TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2337,7 +2349,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Slider.Title.Text = "Callback Error"
-					print("Trilha | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+					print("Tempest | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Slider.Title.Text = SliderSettings.Name
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2348,7 +2360,7 @@ function TrilhaLibrary:CreateWindow(Settings)
 			end
 			if Settings.ConfigurationSaving then
 				if Settings.ConfigurationSaving.Enabled and SliderSettings.Flag then
-					TrilhaLibrary.Flags[SliderSettings.Flag] = SliderSettings
+					TempestLibrary.Flags[SliderSettings.Flag] = SliderSettings
 				end
 			end
 			return SliderSettings
@@ -2396,8 +2408,8 @@ function TrilhaLibrary:CreateWindow(Settings)
 end
 
 
-function TrilhaLibrary:Destroy()
-	Trilha:Destroy()
+function TempestLibrary:Destroy()
+	Tempest:Destroy()
 end
 
 Topbar.ChangeSize.MouseButton1Click:Connect(function()
@@ -2453,17 +2465,17 @@ for _, TopbarButton in ipairs(Topbar:GetChildren()) do
 end
 
 
-function TrilhaLibrary:LoadConfiguration()
+function TempestLibrary:LoadConfiguration()
 	if CEnabled then
 		pcall(function()
 			if isfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension) then
 				LoadConfiguration(readfile(ConfigurationFolder .. "/" .. CFileName .. ConfigurationExtension))
-				TrilhaLibrary:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
+				TempestLibrary:Notify({Title = "Configuration Loaded", Content = "The configuration file for this script has been loaded from a previous session"})
 			end
 		end)
 	end
 end
 
-task.delay(3.5, TrilhaLibrary.LoadConfiguration, TrilhaLibrary)
+task.delay(3.5, TempestLibrary.LoadConfiguration, TempestLibrary)
 
-return TrilhaLibrary
+return TempestLibrary
